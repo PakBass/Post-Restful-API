@@ -42,11 +42,22 @@ class PostController extends Controller
     public function store(Request $request)
     {
         //define validation rules
-        $validator = Validator::make($request->all(), [
-            'image'     => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-            'title'     => 'required',
-            'content'   => 'required',
-        ]);
+        $validator = Validator::make(
+            $request->all(),
+            [
+                'image'     => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+                'title'     => 'required',
+                'content'   => 'required',
+            ],
+            [
+                'image.required'    => 'Gambar harus diisi.',
+                'image.image'       => 'File yang diunggah harus berupa gambar.',
+                'image.mimes'       => 'Format gambar yang diperbolehkan hanya: JPEG, PNG, JPG, GIF, SVG.',
+                'image.max'         => 'Ukuran gambar tidak boleh lebih dari 2MB.',
+                'title.required'    => 'Judul harus diisi.',
+                'content.required'  => 'Konten harus diisi.',
+            ]
+        );
 
         //check if validation fails
         if ($validator->fails()) {
@@ -96,6 +107,9 @@ class PostController extends Controller
         $validator = Validator::make($request->all(), [
             'title'     => 'required',
             'content'   => 'required',
+        ], [
+            'title.required'    => 'Judul harus diisi.',
+            'content.required'  => 'Konten harus diisi.',
         ]);
 
         //check if validation fails
@@ -114,7 +128,7 @@ class PostController extends Controller
             $image->storeAs('public/posts', $image->hashName());
 
             //delete old image
-            Storage::delete('public/posts/'.$post->image);
+            Storage::delete('public/posts/' . $post->image);
 
             //update post with new image
             $post->update([
@@ -122,7 +136,6 @@ class PostController extends Controller
                 'title'     => $request->title,
                 'content'   => $request->content,
             ]);
-
         } else {
 
             //update post without image
@@ -149,7 +162,7 @@ class PostController extends Controller
         $post = Post::find($id);
 
         //delete image
-        Storage::delete('public/posts/'.$post->image);
+        Storage::delete('public/posts/' . $post->image);
 
         //delete post
         $post->delete();
