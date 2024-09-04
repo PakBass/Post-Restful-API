@@ -128,7 +128,7 @@ class PostController extends Controller
             $image->storeAs('public/posts', $image->hashName());
 
             //delete old image
-            Storage::delete('public/posts/' . $post->image);
+            Storage::delete('public/posts/' . basename($post->image));
 
             //update post with new image
             $post->update([
@@ -162,7 +162,7 @@ class PostController extends Controller
         $post = Post::find($id);
 
         //delete image
-        Storage::delete('public/posts/' . $post->image);
+        Storage::delete('public/posts/' . basename($post->image));
 
         //delete post
         $post->delete();
